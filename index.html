@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Invito Laurea Antonio Lagonigro</title>
+  <meta name="description" content="Invito digitale alla laurea di Antonio Lagonigro" />
+  <meta name="theme-color" content="#760d13" />
+  <style>
+    :root{
+      --gold:#d8ad54;
+      --gold2:#f4d98f;
+      --red:#760d13;
+      --red2:#280204;
+      --ease:cubic-bezier(.16,.9,.14,1);
+    }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      min-height:100%;
+      background:linear-gradient(180deg,#1e0103,#760d13 48%,#1a0102);
+      overflow-x:hidden;
+      scroll-behavior:smooth;
+      font-family:Georgia,"Times New Roman",serif;
+      -webkit-font-smoothing:antialiased;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 50% 0%,rgba(244,217,143,.16),transparent 30%),
+        radial-gradient(circle at 50% 82%,rgba(244,217,143,.08),transparent 28%),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(0deg,rgba(255,255,255,.022) 1px,transparent 1px);
+      background-size:auto,auto,42px 42px,42px 42px;
+      mix-blend-mode:screen;
+      opacity:.9;
+    }
+
+    /* INTRO: usa le stesse immagini del PDF, ma tagliate in pezzi per aprire la busta */
+    .intro{
+      position:fixed;
+      inset:0;
+      z-index:1000;
+      display:grid;
+      place-items:center;
+      background:
+        radial-gradient(circle at 50% 0%,rgba(244,217,143,.18),transparent 27%),
+        linear-gradient(180deg,#1c0103,#690b11 50%,#160102);
+      overflow:hidden;
+      transition:opacity .72s ease, visibility .72s ease;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .intro.hidden{opacity:0;visibility:hidden}
+    .stage{
+      position:relative;
+      width:min(100vw, 470px, calc(100svh * 1307 / 2323));
+      aspect-ratio:1307/2323;
+      perspective:1800px;
+      transform-style:preserve-3d;
+      filter:drop-shadow(0 32px 55px rgba(0,0,0,.58));
+      cursor:pointer;
+    }
+    .img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:fill;
+      user-select:none;
+      -webkit-user-drag:none;
+      backface-visibility:hidden;
+    }
+    .base{
+      z-index:8;
+      opacity:1;
+      transition:opacity .5s ease .35s, filter .5s ease .35s;
+    }
+    .end-card{
+      z-index:1;
+      opacity:0;
+      transform:translateY(8%) scale(1.045);
+      filter:brightness(.8);
+      transition:
+        opacity 1.15s ease 1.85s,
+        transform 2.05s var(--ease) 1.45s,
+        filter 1.8s ease 1.55s;
+    }
+    .piece{
+      position:absolute;
+      inset:0;
+      background-image:url("assets/page-1.png");
+      background-size:100% 100%;
+      background-position:center;
+      transform-style:preserve-3d;
+      backface-visibility:hidden;
+      will-change:transform,opacity,filter;
+    }
+    .top-flap{
+      z-index:20;
+      clip-path:polygon(0 0,100% 0,100% 26%,50% 19.6%,0 26%);
+      transform-origin:50% 0%;
+      transition:transform 1.65s var(--ease) .18s, filter 1.65s ease .18s, opacity .8s ease 2.35s;
+    }
+    .left-flap{
+      z-index:15;
+      clip-path:polygon(0 26%,39% 52%,0 91%);
+      transform-origin:0 54%;
+      transition:transform 1.65s var(--ease) .55s, filter 1.2s ease .55s, opacity 1.2s ease 2.2s;
+    }
+    .right-flap{
+      z-index:15;
+      clip-path:polygon(100% 26%,61% 52%,100% 91%);
+      transform-origin:100% 54%;
+      transition:transform 1.65s var(--ease) .55s, filter 1.2s ease .55s, opacity 1.2s ease 2.2s;
+    }
+    .bottom-flap{
+      z-index:17;
+      clip-path:polygon(0 100%,50% 78%,100% 100%);
+      transform-origin:50% 100%;
+      transition:transform 1.55s var(--ease) .7s, filter 1.2s ease .7s, opacity 1.2s ease 2.2s;
+    }
+    .center-front{
+      z-index:16;
+      clip-path:polygon(33% 52%,67% 52%,60% 100%,40% 100%);
+      transform-origin:50% 91%;
+      transition:transform 1.55s var(--ease) .66s, filter 1.2s ease .66s, opacity 1.2s ease 2.15s;
+    }
+    .seal-piece{
+      z-index:25;
+      clip-path:circle(8.4% at 50% 60.7%);
+      transform-origin:50% 60.7%;
+      transition:transform 1.12s var(--ease) .36s, opacity .65s ease 1.05s, filter .75s ease .7s;
+    }
+
+    .intro.play .base{opacity:0;filter:brightness(.75)}
+    .intro.play .end-card{opacity:1;transform:translateY(0) scale(1);filter:brightness(1)}
+    .intro.play .top-flap{
+      transform:rotateX(-176deg) translateY(-1.4%);
+      filter:brightness(.68);
+      opacity:0;
+    }
+    .intro.play .left-flap{
+      transform:rotateY(-34deg) translateX(-8%) translateZ(20px);
+      filter:brightness(.88);
+      opacity:0;
+    }
+    .intro.play .right-flap{
+      transform:rotateY(34deg) translateX(8%) translateZ(20px);
+      filter:brightness(.88);
+      opacity:0;
+    }
+    .intro.play .bottom-flap{
+      transform:rotateX(28deg) translateY(4%) translateZ(18px);
+      filter:brightness(.82);
+      opacity:0;
+    }
+    .intro.play .center-front{
+      transform:rotateX(30deg) translateY(12%) scale(.98);
+      filter:brightness(.72);
+      opacity:0;
+    }
+    .intro.play .seal-piece{
+      transform:translateY(19%) rotate(24deg) scale(.12);
+      opacity:0;
+      filter:blur(1.2px) brightness(.85);
+    }
+
+    .tap-text{
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:calc(env(safe-area-inset-bottom) + 18px);
+      z-index:35;
+      color:rgba(244,217,143,.92);
+      text-align:center;
+      text-transform:uppercase;
+      letter-spacing:.24em;
+      font-size:12px;
+      text-shadow:0 4px 14px rgba(0,0,0,.82);
+      animation:pulse 1.55s ease-in-out infinite;
+      pointer-events:none;
+    }
+    .intro.play .tap-text{opacity:0;animation:none}
+    @keyframes pulse{
+      0%,100%{opacity:.45;transform:translateY(0)}
+      50%{opacity:1;transform:translateY(-4px)}
+    }
+
+    /* VIEWER: pagine identiche all'ultimo PDF */
+    main{
+      position:relative;
+      z-index:2;
+      opacity:0;
+      transition:opacity .6s ease 2.1s;
+    }
+    main.ready{opacity:1}
+    .viewer{
+      width:100%;
+      min-height:100svh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      scroll-snap-type:y mandatory;
+    }
+    .page{
+      width:100%;
+      height:100svh;
+      min-height:100svh;
+      display:grid;
+      place-items:center;
+      scroll-snap-align:start;
+      position:relative;
+    }
+    .page-inner{
+      position:relative;
+      width:min(100vw, 470px, calc(100svh * 1307 / 2323));
+      aspect-ratio:1307/2323;
+      filter:drop-shadow(0 25px 42px rgba(0,0,0,.48));
+    }
+    .pdf-page{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:fill;
+      display:block;
+      user-select:none;
+      -webkit-user-drag:none;
+    }
+    .hotspot{
+      position:absolute;
+      z-index:5;
+      display:block;
+      border-radius:20px;
+      text-decoration:none;
+      -webkit-tap-highlight-color:rgba(244,217,143,.18);
+    }
+    .hotspot:active{background:rgba(244,217,143,.14)}
+    .map-btn{left:24%;top:83.5%;width:52%;height:9.8%}
+    .location-btn{left:20%;top:82.8%;width:60%;height:10.5%}
+    .yes-btn{left:13%;top:43.6%;width:74%;height:11.7%}
+    .no-btn{left:13%;top:57.5%;width:74%;height:11.7%}
+
+    .dots{
+      position:fixed;
+      right:10px;
+      top:50%;
+      transform:translateY(-50%);
+      z-index:20;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      pointer-events:none;
+    }
+    .dot{
+      width:7px;
+      height:7px;
+      border-radius:99px;
+      background:rgba(255,255,255,.25);
+      transition:all .25s ease;
+    }
+    .dot.active{
+      height:24px;
+      background:var(--gold);
+    }
+  </style>
+</head>
+<body>
+  <div class="intro" id="intro">
+    <div class="stage" id="openStage" role="button" tabindex="0" aria-label="Apri invito">
+      <img class="img end-card" src="assets/page-3.png" alt="Invito rivelato">
+      <img class="img base" src="assets/page-1.png" alt="Busta chiusa">
+      <div class="piece top-flap"></div>
+      <div class="piece left-flap"></div>
+      <div class="piece right-flap"></div>
+      <div class="piece bottom-flap"></div>
+      <div class="piece center-front"></div>
+      <div class="piece seal-piece"></div>
+      <div class="tap-text">Tocca per aprire</div>
+    </div>
+  </div>
+
+  <div class="dots" aria-hidden="true">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+
+  <main id="main">
+    <section class="viewer">
+      <article class="page snap-section" data-index="0">
+        <div class="page-inner">
+          <img class="pdf-page" src="assets/page-3.png" alt="Invito ufficiale">
+        </div>
+      </article>
+
+      <article class="page snap-section" data-index="1">
+        <div class="page-inner">
+          <img class="pdf-page" src="assets/page-4.png" alt="Proclamazione">
+          <a class="hotspot map-btn" href="https://www.google.com/maps/search/?api=1&query=Aula%20Magna%20Palazzo%20Sede%20Centrale%20Universit%C3%A0%20Kore%20di%20Enna" target="_blank" rel="noopener" aria-label="Apri mappa sede"></a>
+        </div>
+      </article>
+
+      <article class="page snap-section" data-index="2">
+        <div class="page-inner">
+          <img class="pdf-page" src="assets/page-5.png" alt="Brindisi di laurea">
+          <a class="hotspot location-btn" href="https://share.google/bkUoDnB5a32QzzJNb" target="_blank" rel="noopener" aria-label="Apri location"></a>
+        </div>
+      </article>
+
+      <article class="page snap-section" data-index="3">
+        <div class="page-inner">
+          <img class="pdf-page" src="assets/page-6.png" alt="RSVP">
+          <a class="hotspot yes-btn" href="https://wa.me/393883752897?text=Ciao%20Antonio%2C%20ho%20ricevuto%20il%20tuo%20invito%20di%20laurea.%20Con%20piacere%20ti%20confermo%20che%20ci%20sar%C3%B2%20per%20festeggiare%20con%20te%20il%2016%20luglio!%20%F0%9F%8E%93%F0%9F%A5%82" target="_blank" rel="noopener" aria-label="Ci sarò"></a>
+          <a class="hotspot no-btn" href="https://wa.me/393883752897?text=Ciao%20Antonio%2C%20grazie%20di%20cuore%20per%20l%27invito%20alla%20tua%20laurea.%20Purtroppo%20non%20riuscir%C3%B2%20a%20essere%20presente%20il%2016%20luglio%2C%20ma%20ti%20faccio%20i%20miei%20migliori%20auguri%20per%20questo%20traguardo!%20%F0%9F%8E%93" target="_blank" rel="noopener" aria-label="Non ci sarò"></a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const intro = document.getElementById('intro');
+    const stage = document.getElementById('openStage');
+    const main = document.getElementById('main');
+    let opened = false;
+
+    function openInvite(){
+      if(opened) return;
+      opened = true;
+      intro.classList.add('play');
+      main.classList.add('ready');
+      setTimeout(() => {
+        intro.classList.add('hidden');
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }, 3900);
+    }
+
+    stage.addEventListener('click', openInvite);
+    stage.addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ' ') openInvite();
+    });
+
+    const dots = [...document.querySelectorAll('.dot')];
+    const sections = [...document.querySelectorAll('.snap-section')];
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          const idx = Number(entry.target.dataset.index);
+          dots.forEach((dot,i)=>dot.classList.toggle('active', i === idx));
+        }
+      });
+    }, { threshold: .55 });
+    sections.forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>
